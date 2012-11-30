@@ -1,125 +1,114 @@
-"---------------------------------------------------------------------------
-" DropBox対策
-"---------------------------------------------------------------------------
-" ファイル操作に関する設定:
-" swapファイルをまとめて置く場所
-set swapfile
-set directory=~/.vimswap
+" An example for a vimrc file.
+"
+" Maintainer:	Bram Moolenaar <Bram@vim.org>
+" Last change:	2008 Dec 17
+"
+" To use it, copy it to
+"     for Unix and OS/2:  ~/.vimrc
+"	      for Amiga:  s:.vimrc
+"  for MS-DOS and Win32:  $VIM\_vimrc
+"	    for OpenVMS:  sys$login:.vimrc
 
-" backupファイルをまとめて置く場所
-set backup
-set backupdir=~/.vimbackup
+" When started as "evim", evim.vim will already have done these settings.
+if v:progname =~? "evim"
+  finish
+endif
 
-highlight zenkakuda cterm=underline ctermfg=black guibg=black
-if has('win32') && !has('gui_running')
-	" win32のコンソールvimはsjisで設定ファイルを読むので、
-	" sjisの全角スペースの文字コードを指定してやる
-	match zenkakuda /\%u8140/
+" Use Vim settings, rather than Vi settings (much better!).
+" This must be first, because it changes other options as a side effect.
+set nocompatible
+
+" allow backspacing over everything in insert mode
+set backspace=indent,eol,start
+
+if has("vms")
+  set nobackup		" do not keep a backup file, use versions instead
 else
-	match zenkakuda /　/ "←全角スペース
+  set backup		" keep a backup file
+endif
+set history=50		" keep 50 lines of command line history
+set ruler		" show the cursor position all the time
+set showcmd		" display incomplete commands
+set incsearch		" do incremental searching
+
+" For Win32 GUI: remove 't' flag from 'guioptions': no tearoff menu entries
+" let &guioptions = substitute(&guioptions, "t", "", "g")
+
+" Don't use Ex mode, use Q for formatting
+"map Q gq
+
+" CTRL-U in insert mode deletes a lot.  Use CTRL-G u to first break undo,
+" so that you can undo CTRL-U after inserting a line break.
+inoremap <C-U> <C-G>u<C-U>
+
+" In many terminal emulators the mouse works just fine, thus enable it.
+if has('mouse')
+  set mouse=a
 endif
 
-"---------------------------------------------------------------------------
-" OS毎に.vimの読み込み先を変える{{{
-"---------------------------------------------------------------------------
-if has('win32')
-	:let $VIMFILE_DIR = 'vimfiles'
+" Switch syntax highlighting on, when the terminal has colors
+" Also switch on highlighting the last used search pattern.
+if &t_Co > 2 || has("gui_running")
+  syntax on
+  set hlsearch
+endif
+
+" Only do this part when compiled with support for autocommands.
+if has("autocmd")
+
+  " Enable file type detection.
+  " Use the default filetype settings, so that mail gets 'tw' set to 72,
+  " 'cindent' is on in C files, etc.
+  " Also load indent files, to automatically do language-dependent indenting.
+  filetype plugin indent on
+
+  " Put these in an autocmd group, so that we can delete them easily.
+  augroup vimrcEx
+  au!
+
+  " For all text files set 'textwidth' to 78 characters.
+  autocmd FileType text setlocal textwidth=78
+
+  " When editing a file, always jump to the last known cursor position.
+  " Don't do it when the position is invalid or when inside an event handler
+  " (happens when dropping a file on gvim).
+  " Also don't do it when the mark is in the first line, that is the default
+  " position when opening a file.
+  autocmd BufReadPost *
+    \ if line("'\"") > 1 && line("'\"") <= line("$") |
+    \   exe "normal! g`\"" |
+    \ endif
+
+  augroup END
+
 else
-	:let $VIMFILE_DIR = 'vim'
+
+  set autoindent		" always set autoindenting on
+
+endif " has("autocmd")
+
+" Convenient command to see the difference between the current buffer and the
+" file it was loaded from, thus the changes you made.
+" Only define it when not defined already.
+if !exists(":DiffOrig")
+  command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
+		  \ | wincmd p | diffthis
 endif
-" ～ こっから先、~/.vimを参照する場合、代わりに、~/.$VIMFILE_DIR と書くこと!
-"}}}
 
-"---------------------------------------------------------------------------
-" DropBox対策終わり
-"---------------------------------------------------------------------------
-
-"---------------------------------------------------------------------------
-" プラグインの読み込み
-if glob("~/." . $VIMFILE_DIR . "/*.vim") != ""
-	source ~/.$VIMFILE_DIR/*.vim
-endif
-"---------------------------------------------------------------------------
-
-"---------------------------------------------------------------------------
-"ファイルタイプ別の設定
-:filetype indent on
-:filetype plugin on
-"---------------------------------------------------------------------------
-
-"---------------------------------------------------------------------------
-" 検索の挙動に関する設定:
-"
-" 検索時に大文字小文字を無視 (noignorecase:無視しない)
-set ignorecase
-" 大文字小文字の両方が含まれている場合は大文字小文字を区別
-set smartcase
-" 検索ハイライト
-set hlsearch
-" インクリメンタルサーチ
-set incsearch
-
-"---------------------------------------------------------------------------
-" 編集に関する設定:
-"
-" タブの画面上での幅
-set tabstop=4
-" タブをスペースに展開しない (expandtab:展開する)
-set noexpandtab
-" 自動的にインデントする (noautoindent:インデントしない)
-set autoindent
-" バックスペースでインデントや改行を削除できるようにする
-set backspace=2
-" 検索時にファイルの最後まで行ったら最初に戻る (nowrapscan:戻らない)
-set wrapscan
-" 括弧入力時に対応する括弧を表示 (noshowmatch:表示しない)
-set showmatch
-" コマンドライン補完するときに強化されたものを使う(参照 :help wildmenu)
-set wildmenu
-" テキスト挿入中の自動折り返しを日本語に対応させる
-set formatoptions+=mM
-" 日本語整形スクリプト(by. 西岡拓洋さん)用の設定
-let format_allow_over_tw = 1	" ぶら下り可能幅
-
-"---------------------------------------------------------------------------
-" GUI固有ではない画面表示の設定:
-"
-" 行番号を非表示 (number:表示)
+" custormize start
 set number
-" ルーラーを表示 (noruler:非表示)
-set ruler
-" タブや改行を表示 (list:表示)
-set list
-" どの文字でタブや改行を表示するかを設定
-set listchars=tab:>_,extends:<,trail:-,eol:$
-" 長い行を折り返して表示 (nowrap:折り返さない)
 set nowrap
-" 常にステータス行を表示 (詳細は:he laststatus)
-set laststatus=2
-" コマンドラインの高さ (Windows用gvim使用時はgvimrcを編集すること)
-set cmdheight=2
-" コマンドをステータス行に表示
-set showcmd
-" タイトルを表示
-set title
-" 画面を黒地に白にする (次行の先頭の " を削除すれば有効になる)
-"colorscheme evening " (Windows用gvim使用時はgvimrcを編集すること)
+set guioptions+=b
+set backupext=bak
+set backupdir=~/vimbackup,.
+set tabstop=4
+set shiftwidth=4
+set ignorecase smartcase
+set diffopt+=vertical
+set list
+set listchars=tab:>_,eol:$
+set cursorline
+highlight CursorLine cterm=underline ctermfg=NONE ctermbg=NONE
 
-"--------------------------------------------------------------------------
-
-"---------------------------------------------------------------------------
-" プラグインに関する設定:
-let g:neocomplcache_enable_at_startup = 1
-" 数字で候補を指定
-let g:neocomplcache_enable_quick_match = 1
-" Recommended key-mappings.
-" <CR>: close popup and save indent.
-inoremap <expr><CR>  neocomplcache#smart_close_popup() . "\<CR>"
-
-"ユーザ定義の辞書を指定
-let g:neocomplcache_dictionary_filetype_lists = {
-  \ 'default' : '',
-  \ 'scala' : $HOME . '/.vim/dict/scala.dict',
-  \ }
-"---------------------------------------------------------------------------
-
+set formatoptions-=t
+"set equalprg=ruby
