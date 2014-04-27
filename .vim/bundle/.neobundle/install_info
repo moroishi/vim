@@ -1,0 +1,2 @@
+3.0
+{'neobundle.vim': {'checked_time': 1398583016, 'installed_uri': 'https://github.com/Shougo/neobundle.vim.git', 'installed_path': '/Users/masamichi/.vim/bundle/neobundle.vim', 'revisions': {}, 'updated_time': 1398583016}, 'vim-quickrun': {'checked_time': 1398583360, 'installed_uri': 'https://github.com/thinca/vim-quickrun.git', 'installed_path': '/Users/masamichi/.vim/bundle/vim-quickrun', 'revisions': {'1393382268': '3532c2b71f4ed84bac5e4755027245b929092b04'}, 'updated_time': '1393382268'}}
