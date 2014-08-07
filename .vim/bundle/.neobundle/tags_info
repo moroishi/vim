@@ -1,2 +1,4 @@
 neobundle.vim
+neocomplete
+vim-markdown
 vim-quickrun

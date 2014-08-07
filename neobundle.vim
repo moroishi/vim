@@ -7,7 +7,9 @@ call neobundle#begin(expand('~/.vim/bundle/'))
 
 NeoBundleFetch 'Shougo/neobundle.vim'
 
+NeoBundle 'Shougo/neocomplete'
 NeoBundle 'thinca/vim-quickrun'
+NeoBundle 'rcmdnk/vim-markdown'
 
 call neobundle#end()
 
